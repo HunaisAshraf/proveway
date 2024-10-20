@@ -1,5 +1,6 @@
 const UserModel = require("../models/userModel");
 const bcryptjs = require("bcryptjs");
+const { createAccessToken, createRefreshToken } = require("../utils/utils");
 
 const signupController = async (req, res) => {
   try {
@@ -49,7 +50,22 @@ const loginController = async (req, res) => {
     }
 
     user.password = undefined;
-    return res.status(200).json({ success: true, message: "Login succesfull" });
+
+    const accessToken = createAccessToken(user);
+    const refreshToken = createRefreshToken(user);
+
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Login succesfull", accessToken });
   } catch (error) {
     console.log(error);
   }
