@@ -15,7 +15,7 @@ const signupController = async (req, res) => {
         .json({ success: false, message: "user already exist" });
     }
 
-    const hashedPassword = bcryptjs.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     const newUser = new UserModel({
       name,
@@ -44,14 +44,12 @@ const loginController = async (req, res) => {
         .json({ success: false, message: "user not found" });
     }
 
-    const passwordMatch = bcryptjs.compare(password, user.password);
+    const passwordMatch = await bcryptjs.compare(password, user.password);
     if (!passwordMatch) {
       return res
         .status(402)
         .json({ success: false, message: "invalid password" });
     }
-
-    user.password = undefined;
 
     const accessToken = createAccessToken(user);
     const refreshToken = createRefreshToken(user);
@@ -59,6 +57,7 @@ const loginController = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
+    user.password = undefined;
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "strict",
@@ -67,7 +66,7 @@ const loginController = async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: "Login succesfull", accessToken });
+      .json({ success: true, message: "Login succesfull", user, accessToken });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ success: false });

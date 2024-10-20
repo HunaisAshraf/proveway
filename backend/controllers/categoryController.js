@@ -16,7 +16,7 @@ const getCategoryController = async (req, res) => {
 const addCategoryControlelr = async (req, res) => {
   try {
     const { _id } = req.user;
-    const { category } = req.user;
+    const { category } = req.body;
 
     const newCategory = new CategoryModel({
       category,
