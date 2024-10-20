@@ -7,7 +7,7 @@ const signupController = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    const user = await UserModel.find(email);
+    const user = await UserModel.find({ email });
 
     if (user) {
       return res
@@ -36,7 +36,7 @@ const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await UserModel.findOne(email);
+    const user = await UserModel.findOne({ email });
 
     if (!user) {
       return res
@@ -83,7 +83,7 @@ const verifyRefershToken = async (req, res) => {
         .json({ success: false, message: "refreshToken missing" });
     }
 
-    const user = await UserModel.findOne(refreshToken);
+    const user = await UserModel.findOne({ refreshToken });
 
     if (!user) {
       return res.status(403).json({ success: false });
