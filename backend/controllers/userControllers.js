@@ -7,7 +7,7 @@ const signupController = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    const user = await UserModel.find({ email });
+    const user = await UserModel.findOne({ email });
 
     if (user) {
       return res
