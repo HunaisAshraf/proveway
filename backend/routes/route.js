@@ -7,6 +7,7 @@ const {
 } = require("../middlewares/inputValidator");
 const { authentication } = require("../middlewares/authenticate");
 const taskController = require("../controllers/taskController");
+const categoryController = require("../controllers/categoryController");
 
 router.post("/signup", signupValitor, userController.signupController);
 router.post("/login", loginValidator, userController.loginController);
@@ -19,6 +20,22 @@ router.delete(
   "/tasks/:id",
   authentication,
   taskController.deleteTaskController
+);
+
+router.get(
+  "/categories",
+  authentication,
+  categoryController.getCategoryController
+);
+router.post(
+  "/categories",
+  authentication,
+  categoryController.addCategoryControlelr
+);
+router.delete(
+  "/categories/:id",
+  authentication,
+  categoryController.deleteCategoryController
 );
 
 module.exports = router;
